@@ -1,0 +1,595 @@
+<dcotype html>
+  <head>
+    <title>Test page for D3 Covid-19 equity chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/d3@6.2.0/dist/d3.min.js" type="text/javascript"></script>
+    <style>
+      .title-container {
+        border-bottom:  solid 1px;
+        width: 420px;
+        font-size: 1.2rem;
+        line-height: 30px;
+        font-weight: normal;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="bg-lightblue py-5" style="max-width: 900px;">
+      <div class="container py-2">
+        <h2 class="text-center color-orange">Infections by group</h2>
+        <div class="col-lg-12 bg-white px-3 py-4">
+          <div class="row d-flex justify-content-md-center">
+            <div class="toggle-link-container">
+              <div class="grid-layout-hd toggle-links bg-darkblue bd-darkblue">
+                <a href="#" class="toggle-active js-toggle-group ethnicity"
+                  >Ethnicity</a
+                >
+                <a href="#" class="js-toggle-group gender">Gender</a>
+                <a href="#" class="js-toggle-group age">Age</a>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="toggle-group-container col-10 mx-auto">
+              <div
+                id="gender-graph"
+                class="toggle-group-element"
+                style="display: none"
+              >
+                <div id="genderGroupChartContainer">
+                  <p>
+                    The distribution of confirmed COVID-19 deaths reveals a
+                    disparity between genders, with males having a
+                    disproportionate number of deaths relative to their
+                    population.
+                  </p>
+                  <div class="tableauPlaceholder1"></div>
+                  <div class="tableauPlaceholder2"></div>
+                </div>
+              </div>
+              <div
+                id="age-graph"
+                class="toggle-group-element"
+                style="display: none"
+              >
+                <div id="ageGroupChartContainer">
+                  <p>
+                    The distribution of confirmed COVID-19 cases and deaths
+                    reveals significant disparities across California’s age
+                    groups. People 18-49 have a disproportionate number of
+                    cases. People 65 and over have a disproportionate number of
+                    deaths.
+                  </p>
+                  <div class="tableauPlaceholder"></div>
+                </div>
+              </div>
+              <div id="ethnicity-graph" class="toggle-group-element">
+                <div id="ethnicityGroupChartContainer">
+                  <p>
+                    The distribution of confirmed COVID-19 cases reveals
+                    significant disparities within California’s overall racial
+                    and ethnic demographics, with Latino and Native Hawaiian /
+                    Pacific Islander groups having a disproportionate number of
+                    cases relative to their population in the state. Additional
+                    <a
+                      href="https://www.cdph.ca.gov/Programs/CID/DCDC/Pages/COVID-19/Race-Ethnicity.aspx"
+                      >COVID-19 race and ethnicity data</a
+                    >
+                    is available.
+                  </p>
+                  <div class="someCharts" style="display:flex;">
+                    <div class="tableauPlaceholder1">
+                      <div class="title-container">Positive cases by ethnicity</div>
+                    </div>
+                    <div class="tableauPlaceholder2">
+                      <div class="title-container">Total deaths by ethnicity</div>
+                    </div>
+                  </div>
+                </div>
+                <p class="todo-fix-this-wach-move">
+                  Note: Percentages may not add up to 100% due to rounding.
+                  Ethnicity is only available for a subset of the total number
+                  of deaths as reported by law enforcement.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--END col-12-->
+      </div>
+      <!--END CONTAINER-->
+    </div>
+    <!--END BG lightblue-->
+
+    <script>
+      var margin = { top: 5, right: 40, bottom: 20, left: 120 },
+    width = 420 - margin.left - margin.right,
+    height = 50 - margin.top - margin.bottom;
+
+  let data = [
+  {
+    measures: [0.3],
+    title: "AI/AN",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 0.5, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [5.5],
+    title: "Asian American",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 15.4, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [4.3],
+    title: "African American",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [{ value: 6, name: "Share of CA population", color: "limegreen" }]
+  },
+  {
+    measures: [61.2],
+    title: "Latinx",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 38.9, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [17.0],
+    title: "White",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 36.6, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [10.2],
+    title: "Other",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [{ value: 0, name: "Share of CA population", color: "limegreen" }]
+  },
+  {
+    measures: [1.0],
+    title: "Multiple",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 2.2, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [0.5],
+    title: "NH/PI",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 0.2, name: "Share of CA population", color: "limegreen" }
+    ]
+  }
+];
+
+
+let data2 = [
+  {
+    measures: [0.3],
+    title: "AI/AN",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 0.5, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [11.7],
+    title: "Asian American",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 15.4, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [7.6],
+    title: "African American",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [{ value: 6, name: "Share of CA population", color: "limegreen" }]
+  },
+  {
+    measures: [48.5],
+    title: "Latinx",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 38.9, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [0.5],
+    title: "White",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 36.6, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [30],
+    title: "Other",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [{ value: 0, name: "Share of CA population", color: "limegreen" }]
+  },
+  {
+    measures: [0.7],
+    title: "Multiple",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 2.2, name: "Share of CA population", color: "limegreen" }
+    ]
+  },
+  {
+    measures: [0.6],
+    title: "NH/PI",
+    subtitle: "",
+    ranges: [0, 100],
+    markers: [
+      { value: 0.2, name: "Share of CA population", color: "limegreen" }
+    ]
+  }
+];
+
+  function bullet() {
+    var orient = "left",
+      reverse = false,
+      duration = 0,
+      ranges = bulletRanges,
+      markers = bulletMarkers,
+      measures = bulletMeasures,
+      width = 380,
+      height = 30,
+      tickFormat = d3.format(".0f");
+
+    // For each small multiple…
+    function bullet(g) {
+      g.each(function(d, i) {
+        var rangez = ranges
+            .call(this, d, i)
+            .slice()
+            .sort(d3.descending),
+          markerz = markers
+            .call(this, d, i)
+            .slice()
+            .sort(d3.descending),
+          measurez = measures
+            .call(this, d, i)
+            .slice()
+            .sort(d3.descending),
+          g = d3.select(this);
+
+        // Compute the new x-scale.
+        var x1 = d3
+          .scaleLinear()
+          .domain([0, Math.max(rangez[0], markerz[0].value, measurez[0])])
+          .range(reverse ? [width, 0] : [0, width]);
+
+        // Retrieve the old x-scale, if this is an update.
+        var x0 =
+          this.__chart__ ||
+          d3
+            .scaleLinear()
+            .domain([0, Infinity])
+            .range(x1.range());
+
+        var markerx0 = (d, i) => {
+          return x0(d.value);
+        };
+
+        var markerx1 = (d, i) => {
+          return x1(d.value);
+        };
+
+        var markerColor = (d, i) => {
+          return d.color;
+        };
+        // Stash the new scale.
+        this.__chart__ = x1;
+
+        // Derive width-scales from the x-scales.
+        var w0 = bulletWidth(x0),
+          w1 = bulletWidth(x1);
+
+        // Update the range rects.
+        var range = g.selectAll("rect.range").data(rangez);
+
+        // Update the measure rects.
+        var measure = g.selectAll("rect.measure").data(measurez);
+
+        measure
+          .enter()
+          .append("rect")
+          .attr("class", (d, i) => "measure s" + i)
+          .attr("width", w0)
+          .attr("height", height /2)
+          .attr("x", reverse ? x0 : 0)
+          .attr("y", height / 3)
+          .style("fill", "#0F368E")
+
+          //tooltip
+          .on('mouseover', function(d) {
+            d3.select('#tooltip');
+            return tooltip.style("visibility", "visible");
+          })
+          .on("mousemove", function() {
+            console.log(this.getBoundingClientRect());
+            return tooltip
+              .style("top", parseInt(this.getBoundingClientRect().y) - 5 + "px")
+              .style(
+                "left",
+                parseInt(this.getBoundingClientRect().right) + 10 + "px"
+              );
+          })
+          .on("mouseout", function() {
+            return tooltip.style("visibility", "hidden");
+          })
+
+          .transition()
+          .duration(duration)
+          .attr("width", w1)
+          .attr("x", reverse ? x1 : 0);
+
+        measure
+          .transition()
+          .duration(duration)
+          .attr("width", w1)
+          .attr("height", height / 3)
+          .attr("x", reverse ? x1 : 0)
+          .attr("y", height / 3);
+
+        // Update the marker lines.
+        var marker = g.selectAll("line.marker").data(markerz);
+
+        marker
+          .enter()
+          .append("line")
+          .attr("class", "marker")
+          .attr("x1", (d, i) => markerx0(d, i))
+          .attr("x2", (d, i) => markerx0(d, i))
+          .attr("y1", height / 13)
+          .attr("y2", (height * 5) / 1)
+          .style("stroke", "grey")
+          .transition()
+          .duration(duration)
+          .attr("x1", (d, i) => markerx1(d, i))
+          .attr("x2", (d, i) => markerx1(d, i));
+
+        marker
+          .transition()
+          .duration(duration)
+          .attr("x1", (d, i) => markerx1(d, i))
+          .attr("x2", (d, i) => markerx1(d, i))
+          .attr("y1", height / 15)
+          .attr("y2", (height * 5) / 6);
+
+        //tooltip
+
+        let tooltip = d3
+          .select("body")
+          .append("rect")
+          .attr("class", "tooltip")
+          .style("position", "absolute")
+          .style("display", "block")
+          .style("right", "0")
+          .style("background", "#ffff")
+          .html(d.title + ": " + d.measures + "%");
+
+        var format = tickFormat || x1.tickFormat(8);
+
+        // Update the tick groups.
+        var tick = g.selectAll("g.tick").data(x1.ticks(8), function(d) {
+          return this.textContent || format(d);
+        });
+
+        // Initialize the ticks with the old scale, x0.
+        var tickEnter = tick
+          .enter()
+          .append("g")
+          .attr("class", "tick")
+          .attr("transform", bulletTranslate(x0))
+          .style("opacity", 1e-6)
+          .style("visibility", "hidden");
+
+        tickEnter
+          .append("line")
+          .attr("y1", height)
+          .attr("y2", (height * 7) / 6);
+
+        tickEnter
+          .append("text")
+          .attr("text-anchor", "middle")
+          .attr("dy", "1em")
+          .attr("y", (height * 7) / 6)
+          .text(format);
+
+        // Transition the entering ticks to the new scale, x1.
+        tickEnter
+          .transition()
+          .duration(duration)
+          .attr("transform", bulletTranslate(x1))
+          .style("opacity", 1);
+
+        // Transition the updating ticks to the new scale, x1.
+        var tickUpdate = tick
+          .transition()
+          .duration(duration)
+          .attr("transform", bulletTranslate(x1))
+          .style("opacity", 1);
+
+        tickUpdate
+          .select("line")
+          .attr("y1", height)
+          .attr("y2", (height * 7) / 6);
+
+        tickUpdate.select("text").attr("y", (height * 7) / 6);
+
+        // Transition the exiting ticks to the new scale, x1.
+        tick
+          .exit()
+          .transition()
+          .duration(duration)
+          .attr("transform", bulletTranslate(x1))
+          .style("opacity", 1e-6)
+          .remove();
+      });
+    }
+
+    // left, right, top, bottom
+    bullet.orient = function(x) {
+      if (!arguments.length) return orient;
+      orient = x;
+      reverse = orient == "right" || orient == "bottom";
+      return bullet;
+    };
+
+    // ranges (bad, satisfactory, good)
+    bullet.ranges = function(x) {
+      if (!arguments.length) return ranges;
+      ranges = x;
+      return bullet;
+    };
+
+    // markers (previous, goal)
+    bullet.markers = function(x) {
+      if (!arguments.length) return markers;
+      markers = x;
+      return bullet;
+    };
+
+    // measures (actual, forecast)
+    bullet.measures = function(x) {
+      if (!arguments.length) return measures;
+      measures = x;
+      return bullet;
+    };
+
+    bullet.width = function(x) {
+      if (!arguments.length) return width;
+      width = x;
+      return bullet;
+    };
+
+    bullet.height = function(x) {
+      if (!arguments.length) return height;
+      height = x;
+      return bullet;
+    };
+
+    bullet.tickFormat = function(x) {
+      if (!arguments.length) return tickFormat;
+      tickFormat = x;
+      return bullet;
+    };
+
+    bullet.duration = function(x) {
+      if (!arguments.length) return duration;
+      duration = x;
+      return bullet;
+    };
+
+    return bullet;
+  }
+
+  function bulletRanges(d) {
+    return d.ranges;
+  }
+
+  function bulletMarkers(d) {
+    return d.markers;
+  }
+
+  function bulletMeasures(d) {
+    return d.measures;
+  }
+
+  function bulletTranslate(x) {
+    return function(d) {
+      return "translate(" + x(d) + ",0)";
+    };
+  }
+
+  function bulletWidth(x) {
+    var x0 = x(0);
+    return function(d) {
+      return Math.abs(x(d) - x0);
+    };
+  }
+
+
+  var chart = bullet()
+    .width(width)
+    .height(height);
+
+  var svg = d3
+    .select('#ethnicityGroupChartContainer .tableauPlaceholder1')
+    .selectAll(".bullet")
+    .data(data)
+    .enter()
+    .append("svg")
+    .attr("class", "bullet")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+    .call(chart);
+
+  var title = svg
+    .append("g")
+    .style("text-anchor", "end")
+    .attr("transform", "translate(-6," + height / 1.5 + ")");
+
+  title
+    .append("text")
+    .attr("class", "title")
+    .text(function(d) {
+      return d.title;
+    });
+
+  var svg2 = d3
+    .select('#ethnicityGroupChartContainer .tableauPlaceholder2')
+    .selectAll(".bullet")
+    .data(data2)
+    .enter()
+    .append("svg")
+    .attr("class", "bullet")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+    .call(chart);  
+
+  var title2 = svg2
+    .append("g")
+    .style("text-anchor", "end")
+    .attr("transform", "translate(-6," + height / 1.5 + ")");
+
+  title2
+    .append("text")
+    .attr("class", "title")
+    .text(function(d) {
+      return d.title;
+    });    
+    </script>
+
+  </body>
+</dcotype>

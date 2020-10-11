@@ -1,0 +1,166 @@
+<dcotype html>
+  <head>
+    <title>Test page for Tableau Covid-19 equity chart</title>
+    <script
+      type="text/javascript"
+      src="https://public.tableau.com/javascripts/api/tableau-2.js"
+    ></script>
+  </head>
+  <body>
+
+    <div class="bg-lightblue py-5">
+      <div class="container py-2">
+        <h2 class="text-center color-orange">Infections by group</h2>
+        <div class="col-lg-12 bg-white px-3 py-4">
+          <div class="row d-flex justify-content-md-center">
+            <div class="toggle-link-container">
+              <div class="grid-layout-hd toggle-links bg-darkblue bd-darkblue">
+                <a href="#" class="toggle-active js-toggle-group ethnicity"
+                  >Ethnicity</a
+                >
+                <a href="#" class="js-toggle-group gender">Gender</a>
+                <a href="#" class="js-toggle-group age">Age</a>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="toggle-group-container col-10 mx-auto">
+              <div
+                id="gender-graph"
+                class="toggle-group-element"
+                style="display: none"
+              >
+                <div id="genderGroupChartContainer">
+                  <p>
+                    The distribution of confirmed COVID-19 deaths reveals a
+                    disparity between genders, with males having a
+                    disproportionate number of deaths relative to their
+                    population.
+                  </p>
+                  <div class="tableauPlaceholder"></div>
+                </div>
+              </div>
+              <div
+                id="age-graph"
+                class="toggle-group-element"
+                style="display: none"
+              >
+                <div id="ageGroupChartContainer">
+                  <p>
+                    The distribution of confirmed COVID-19 cases and deaths
+                    reveals significant disparities across California’s age
+                    groups. People 18-49 have a disproportionate number of
+                    cases. People 65 and over have a disproportionate number of
+                    deaths.
+                  </p>
+                  <div class="tableauPlaceholder"></div>
+                </div>
+              </div>
+              <div id="ethnicity-graph" class="toggle-group-element">
+                <div id="ethnicityGroupChartContainer">
+                  <p>
+                    The distribution of confirmed COVID-19 cases reveals
+                    significant disparities within California’s overall racial
+                    and ethnic demographics, with Latino and Native Hawaiian /
+                    Pacific Islander groups having a disproportionate number of
+                    cases relative to their population in the state. Additional
+                    <a
+                      href="https://www.cdph.ca.gov/Programs/CID/DCDC/Pages/COVID-19/Race-Ethnicity.aspx"
+                      >COVID-19 race and ethnicity data</a
+                    >
+                    is available.
+                  </p>
+                  <div class="tableauPlaceholder"></div>
+                </div>
+                <p class="todo-fix-this-wach-move">
+                  Note: Percentages may not add up to 100% due to rounding.
+                  Ethnicity is only available for a subset of the total number
+                  of deaths as reported by law enforcement.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--END col-12-->
+      </div>
+      <!--END CONTAINER-->
+    </div>
+    <!--END BG lightblue-->
+
+    <script>
+function displayChart(containerSelector,width,height,url) {
+  let chartContainer = document.querySelector(containerSelector);
+  let chartActiveSheet = null;
+  var chartURL = url;
+  let chartOptions = {
+    width: width+'px',
+    height: height+'px'
+  }
+  return new tableau.Viz(chartContainer, chartURL, chartOptions);
+}
+/* desctop */
+let topChartHeights1 = 600;
+let chartWidth = 900;
+let chartWidth2 = 700;
+let countyMapChartHeight = 560;
+/* phone */
+if(window.innerWidth < 700) {
+  topChartHeights1 = 930;
+  countyMapChartHeight = 560;
+  chartWidth = window.innerWidth - 30;
+  chartWidth2 = chartWidth;
+}
+/* small tablet */
+else if (window.innerWidth > 700 && window.innerWidth < 992) {
+  topChartHeights1 = 930;
+  countyMapChartHeight = 560;
+  chartWidth = 700;
+  chartWidth2 = chartWidth;
+}
+/* big tablet */
+else if (window.innerWidth > 992 && window.innerWidth < 1200) {
+  topChartHeights1 = 600;
+  countyMapChartHeight = 560;
+  chartWidth = 800;
+  chartWidth2 = 700;
+}
+
+// these are their own toggle sets
+let ethnicityGroupChart = displayChart('#ethnicityGroupChartContainer', chartWidth, 600, 'https://public.tableau.com/views/StateDashboard_16008816705240/12_1Ethnicity?:language=en&:display_count=y&:origin=viz_share_link')
+let genderGroupChart = ''; // we aren't loading this until they click
+let ageGroupChart = ''; // we aren't loading this until they click
+
+function resetGroupToggles() {
+  groupTogglers.forEach(toggle => {
+    toggle.classList.remove('toggle-active')
+  });
+  document.getElementById('gender-graph').style.display = 'none';
+  document.getElementById('ethnicity-graph').style.display = 'none';
+  document.getElementById('age-graph').style.display = 'none';
+}
+
+let groupTogglers = document.querySelectorAll('.js-toggle-group');
+groupTogglers.forEach(toggle => {
+  toggle.addEventListener('click',function(event) {
+    event.preventDefault();
+    resetGroupToggles();
+    if(this.classList.contains('gender')) {
+      document.getElementById('gender-graph').style.display = 'block';
+      this.classList.add('toggle-active');
+      genderGroupChart = displayChart('#genderGroupChartContainer', chartWidth, 600, 'https://public.tableau.com/views/StateDashboard_16008816705240/12_2Gender?:language=en&:display_count=y&:origin=viz_share_link')
+    }
+    if(this.classList.contains('age')) {
+      document.getElementById('age-graph').style.display = 'block'; 
+      this.classList.add('toggle-active');     
+      ageGroupChart = displayChart('#ageGroupChartContainer', chartWidth, 600, 'https://public.tableau.com/views/StateDashboard_16008816705240/12_3Age?:language=en&:display_count=y&:origin=viz_share_link')
+    }
+    if(this.classList.contains('ethnicity')) {
+      document.getElementById('ethnicity-graph').style.display = 'block';      
+    }
+    this.classList.add('toggle-active');
+  })
+})
+    </script>
+
+  </body>
+</dcotype>
